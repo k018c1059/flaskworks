@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 import mysql.connector as db
 
 db_param = {
@@ -9,7 +9,6 @@ db_param = {
 }
 
 app = Flask(__name__)
-
 
 @app.route('/')
 def index():
@@ -22,6 +21,21 @@ def index():
     conn.close()
     return render_template('index.html', books=rows)
 
-if __name__=='__main__':
-    app.debug = True
-    app.run() 
+@app.route('/send', methods=['POST'])
+def send():
+    title = request.form.get('title')
+    price = request.form.get('price')
+    if title=="" or price=="":
+        return redirect('/')
+    conn = db.connect(**db_param)
+    cur = conn.cursor()
+    stmt = 'INSERT INTO books(title, price) VALUES(%s, %s)'
+    cur.execute(stmt,(title, int(price)))
+    conn.commit()
+    cur.close()
+    conn.close()
+    return redirect('/')
+
+if __name__ == '__main__' :
+    app.debug =True
+    app.run()
