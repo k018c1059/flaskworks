@@ -10,6 +10,7 @@ db_param = {
 
 app = Flask(__name__)
 
+
 @app.route('/')
 def index():
     conn = db.connect(**db_param)
@@ -23,4 +24,4 @@ def index():
 
 if __name__=='__main__':
     app.debug = True
-    app.run()
+    app.run() 
